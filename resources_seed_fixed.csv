@@ -1,0 +1,4 @@
+name,description,category_tags,languages,region,phone,website,hours,is_active,sort_order
+"National Human Trafficking Hotline","24/7 confidential support for trafficking survivors.","{""crisis_support"",""trafficking_support""}","{""en"",""es""}","US","8883737888","https://humantraffickinghotline.org","24/7",true,1
+"VictimConnect Resource Center","National referral helpline for crime victims.","{""victim_support"",""case_management""}","{""en"",""es""}","US","8554842846","https://victimconnect.org","24/7",true,2
+"StrongHearts Native Helpline","Support for Native survivors of violence.","{""crisis_support"",""safety_planning""}","{""en""}","US","8447628483","https://strongheartshelpline.org","24/7",true,3

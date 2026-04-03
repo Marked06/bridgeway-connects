@@ -1,0 +1,527 @@
+{
+  "version": "v2-screening",
+  "title": "Bridgeway Connects",
+  "description": "Answer a few questions to see what kinds of support may be helpful. Your answers are not stored.",
+  "steps": [
+    {
+      "id": "location",
+      "title": "Location and language",
+      "questions": [
+        {
+          "id": "state",
+          "type": "select",
+          "label": "What state are you in, or where do you need help?",
+          "required": true,
+          "default": "US",
+          "options": [
+            { "value": "US", "label": "US" },
+            { "value": "AL", "label": "Alabama" },
+            { "value": "AK", "label": "Alaska" },
+            { "value": "AZ", "label": "Arizona" },
+            { "value": "AR", "label": "Arkansas" },
+            { "value": "CA", "label": "California" },
+            { "value": "CO", "label": "Colorado" },
+            { "value": "CT", "label": "Connecticut" },
+            { "value": "DE", "label": "Delaware" },
+            { "value": "DC", "label": "District of Columbia" },
+            { "value": "FL", "label": "Florida" },
+            { "value": "GA", "label": "Georgia" },
+            { "value": "HI", "label": "Hawaii" },
+            { "value": "ID", "label": "Idaho" },
+            { "value": "IL", "label": "Illinois" },
+            { "value": "IN", "label": "Indiana" },
+            { "value": "IA", "label": "Iowa" },
+            { "value": "KS", "label": "Kansas" },
+            { "value": "KY", "label": "Kentucky" },
+            { "value": "LA", "label": "Louisiana" },
+            { "value": "ME", "label": "Maine" },
+            { "value": "MD", "label": "Maryland" },
+            { "value": "MA", "label": "Massachusetts" },
+            { "value": "MI", "label": "Michigan" },
+            { "value": "MN", "label": "Minnesota" },
+            { "value": "MS", "label": "Mississippi" },
+            { "value": "MO", "label": "Missouri" },
+            { "value": "MT", "label": "Montana" },
+            { "value": "NE", "label": "Nebraska" },
+            { "value": "NV", "label": "Nevada" },
+            { "value": "NH", "label": "New Hampshire" },
+            { "value": "NJ", "label": "New Jersey" },
+            { "value": "NM", "label": "New Mexico" },
+            { "value": "NY", "label": "New York" },
+            { "value": "NC", "label": "North Carolina" },
+            { "value": "ND", "label": "North Dakota" },
+            { "value": "OH", "label": "Ohio" },
+            { "value": "OK", "label": "Oklahoma" },
+            { "value": "OR", "label": "Oregon" },
+            { "value": "PA", "label": "Pennsylvania" },
+            { "value": "RI", "label": "Rhode Island" },
+            { "value": "SC", "label": "South Carolina" },
+            { "value": "SD", "label": "South Dakota" },
+            { "value": "TN", "label": "Tennessee" },
+            { "value": "TX", "label": "Texas" },
+            { "value": "UT", "label": "Utah" },
+            { "value": "VT", "label": "Vermont" },
+            { "value": "VA", "label": "Virginia" },
+            { "value": "WA", "label": "Washington" },
+            { "value": "WV", "label": "West Virginia" },
+            { "value": "WI", "label": "Wisconsin" },
+            { "value": "WY", "label": "Wyoming" }
+          ]
+        },
+        {
+          "id": "language",
+          "type": "select",
+          "label": "Preferred language",
+          "required": true,
+          "default": "en",
+          "options": [
+            { "value": "en", "label": "English" },
+            { "value": "es", "label": "Spanish" },
+            { "value": "fr", "label": "French" },
+            { "value": "pt", "label": "Portuguese" },
+            { "value": "ar", "label": "Arabic" },
+            { "value": "sw", "label": "Swahili" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "title": "Immediate safety",
+      "questions": [
+        {
+          "id": "immediate_danger",
+          "type": "select",
+          "label": "Are you in immediate danger right now?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "safety_risk": 3 }
+          },
+          "tags": {
+            "yes": ["crisis_support", "safety_planning"]
+          }
+        },
+        {
+          "id": "safe_place_tonight",
+          "type": "select",
+          "label": "Do you have a safe place to stay tonight?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "no": { "safety_risk": 2 }
+          },
+          "tags": {
+            "no": ["housing_shelter", "crisis_support"]
+          }
+        },
+        {
+          "id": "monitored",
+          "type": "select",
+          "label": "Is someone monitoring your phone, messages, or movements?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "safety_risk": 1, "coercion_score": 2 }
+          },
+          "tags": {
+            "yes": ["safety_planning", "victim_support"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "control_coercion",
+      "title": "Control, pressure, or threats",
+      "questions": [
+        {
+          "id": "forced_work_or_activity",
+          "type": "select",
+          "label": "Has anyone made you do work, services, or activities you did not want to do?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "trafficking_score": 3 },
+            "not_sure": { "trafficking_score": 1 }
+          },
+          "tags": {
+            "yes": ["trafficking_support", "victim_support"]
+          }
+        },
+        {
+          "id": "threatened_you_or_family",
+          "type": "select",
+          "label": "Has anyone threatened you, your family, or someone you care about?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "safety_risk": 1, "coercion_score": 2 }
+          },
+          "tags": {
+            "yes": ["safety_planning", "victim_support"]
+          }
+        },
+        {
+          "id": "threatened_immigration_or_police",
+          "type": "select",
+          "label": "Has anyone threatened to report you to immigration, police, or other authorities?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "coercion_score": 2, "immigration_need": 1 }
+          },
+          "tags": {
+            "yes": ["immigration_legal_screening", "victim_support"]
+          }
+        },
+        {
+          "id": "controlled_documents",
+          "type": "select",
+          "label": "Has anyone taken or controlled your passport, ID, money, or important documents?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "trafficking_score": 3, "immigration_need": 1 },
+            "not_sure": { "trafficking_score": 1 }
+          },
+          "tags": {
+            "yes": ["case_management", "legal_help", "trafficking_support"]
+          }
+        },
+        {
+          "id": "can_leave_freely",
+          "type": "select",
+          "label": "Are you able to leave your work, housing, or situation freely if you want to?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "no": { "trafficking_score": 3, "coercion_score": 2 },
+            "not_sure": { "trafficking_score": 1 }
+          },
+          "tags": {
+            "no": ["trafficking_support", "safety_planning", "victim_support"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "work_exploitation",
+      "title": "Work conditions",
+      "questions": [
+        {
+          "id": "promised_job_different",
+          "type": "select",
+          "label": "Were you promised one kind of job but made to do different work?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "labor_exploitation_score": 2 }
+          },
+          "tags": {
+            "yes": ["employment_support", "legal_help"]
+          }
+        },
+        {
+          "id": "not_paid_or_underpaid",
+          "type": "select",
+          "label": "Have you been paid less than promised or not paid at all?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "labor_exploitation_score": 2 }
+          },
+          "tags": {
+            "yes": ["employment_support", "financial_assistance", "legal_help"]
+          }
+        },
+        {
+          "id": "unsafe_or_excessive_hours",
+          "type": "select",
+          "label": "Have you been forced to work long hours, without breaks, or in unsafe conditions?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "labor_exploitation_score": 2, "trafficking_score": 1 }
+          },
+          "tags": {
+            "yes": ["employment_support", "medical_care", "trafficking_support"]
+          }
+        },
+        {
+          "id": "debt_pressure",
+          "type": "select",
+          "label": "Has anyone told you that you owe a debt that you must work off?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "trafficking_score": 3 }
+          },
+          "tags": {
+            "yes": ["trafficking_support", "legal_help", "case_management"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "sexual_exploitation",
+      "title": "Sexual exploitation or assault",
+      "questions": [
+        {
+          "id": "forced_sexual_activity",
+          "type": "select",
+          "label": "Has anyone pressured, forced, or manipulated you into sexual activity you did not want?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "sexual_violence_score": 3 }
+          },
+          "tags": {
+            "yes": ["sexual_assault_support", "crisis_support", "victim_support"]
+          }
+        },
+        {
+          "id": "sex_for_needs",
+          "type": "select",
+          "label": "Has anyone made you exchange sexual activity for money, housing, food, safety, or other basic needs?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "sexual_violence_score": 3, "trafficking_score": 2 }
+          },
+          "tags": {
+            "yes": ["sexual_assault_support", "trafficking_support", "victim_support"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "relationship_abuse",
+      "title": "Relationship or family abuse",
+      "questions": [
+        {
+          "id": "partner_controls_life",
+          "type": "select",
+          "label": "Has a partner or family member controlled where you go, who you talk to, or what you do?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "dv_score": 2 }
+          },
+          "tags": {
+            "yes": ["domestic_violence_support", "safety_planning"]
+          }
+        },
+        {
+          "id": "partner_hurt_or_threatened",
+          "type": "select",
+          "label": "Has a partner or family member physically hurt, threatened, or intimidated you?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "dv_score": 3, "safety_risk": 1 }
+          },
+          "tags": {
+            "yes": ["domestic_violence_support", "crisis_support", "victim_support"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "immigration",
+      "title": "Immigration and legal support",
+      "questions": [
+        {
+          "id": "wants_immigration_help",
+          "type": "select",
+          "label": "Would you like help understanding immigration options that may be available to some victims of crime, abuse, or exploitation?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "immigration_need": 2 },
+            "not_sure": { "immigration_need": 1 }
+          },
+          "tags": {
+            "yes": ["immigration_legal_screening"],
+            "not_sure": ["immigration_legal_screening"]
+          }
+        },
+        {
+          "id": "status_or_documents_concern",
+          "type": "select",
+          "label": "Do you have concerns about your immigration status, work authorization, or documents?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not Sure" },
+            { "value": "prefer_not_to_answer", "label": "Prefer Not To Answer" }
+          ],
+          "scores": {
+            "yes": { "immigration_need": 2 }
+          },
+          "tags": {
+            "yes": ["immigration_legal_screening", "case_management"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "needs",
+      "title": "What support do you need right now?",
+      "questions": [
+        {
+          "id": "needs_now",
+          "type": "multiselect",
+          "label": "Select any support you need right now",
+          "required": true,
+          "options": [
+            { "value": "shelter", "label": "Safe Housing / Shelter" },
+            { "value": "food", "label": "Food Assistance" },
+            { "value": "medical", "label": "Medical Care" },
+            { "value": "mental_health", "label": "Counseling / Mental Health Support" },
+            { "value": "legal", "label": "Legal Help" },
+            { "value": "interpretation", "label": "Language Interpretation" },
+            { "value": "transportation", "label": "Transportation" },
+            { "value": "child_services", "label": "Child-Related Support" },
+            { "value": "financial", "label": "Financial Assistance" }
+          ],
+          "tag_map": {
+            "shelter": ["housing_shelter"],
+            "food": ["food_assistance"],
+            "medical": ["medical_care"],
+            "mental_health": ["mental_health"],
+            "legal": ["legal_help", "immigration_legal_screening"],
+            "interpretation": ["language_interpretation"],
+            "transportation": ["transportation"],
+            "child_services": ["child_services"],
+            "financial": ["financial_assistance"]
+          }
+        }
+      ]
+    }
+  ],
+  "thresholds": {
+    "safety_risk": { "moderate": 2, "high": 4 },
+    "trafficking_score": { "moderate": 3, "high": 6 },
+    "dv_score": { "moderate": 2, "high": 4 },
+    "sexual_violence_score": { "moderate": 1, "high": 3 },
+    "immigration_need": { "moderate": 1, "high": 3 },
+    "labor_exploitation_score": { "moderate": 2, "high": 4 }
+  },
+  "threshold_tags": [
+    {
+      "score": "safety_risk",
+      "min": 4,
+      "tags": ["crisis_support", "safety_planning", "housing_shelter"]
+    },
+    {
+      "score": "trafficking_score",
+      "min": 6,
+      "tags": ["trafficking_support", "case_management", "immigration_legal_screening", "victim_support"]
+    },
+    {
+      "score": "dv_score",
+      "min": 2,
+      "tags": ["domestic_violence_support", "safety_planning", "victim_support"]
+    },
+    {
+      "score": "sexual_violence_score",
+      "min": 3,
+      "tags": ["sexual_assault_support", "crisis_support", "victim_support", "mental_health"]
+    },
+    {
+      "score": "immigration_need",
+      "min": 2,
+      "tags": ["immigration_legal_screening"]
+    },
+    {
+      "score": "labor_exploitation_score",
+      "min": 2,
+      "tags": ["employment_support", "legal_help"]
+    }
+  ]
+}

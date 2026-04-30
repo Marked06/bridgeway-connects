@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { buildResultsIntro, evaluateScreening, ScreeningResult } from "@/lib/screening";
+import { buildResultsIntro, evaluateScreening } from "@/lib/screening";
 
 type Resource = {
   id: string;
@@ -18,6 +18,20 @@ type Resource = {
 };
 
 type IntakeConfig = any;
+
+type ScreeningResult = {
+  scores: {
+    safety_risk: number;
+    coercion_score: number;
+    trafficking_score: number;
+    labor_exploitation_score: number;
+    dv_score: number;
+    sexual_violence_score: number;
+    immigration_need: number;
+  };
+  tags: string[];
+  summaryFlags: string[];
+};
 
 const theme = {
   pageBg: "#F8FAFC",

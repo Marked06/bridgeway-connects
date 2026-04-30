@@ -46,6 +46,9 @@ export type ScreeningResult = {
   scores: ScoreMap;
   tags: string[];
   summaryFlags: string[];
+  total_score: number;
+  risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  intersections: string[];
 };
 
 const EMPTY_SCORES: ScoreMap = {
@@ -120,10 +123,34 @@ export function evaluateScreening(config: IntakeConfig, answers: Answers): Scree
   if (scores.labor_exploitation_score >= 4) summaryFlags.push("high_labor_exploitation_indicators");
   else if (scores.labor_exploitation_score >= 2) summaryFlags.push("moderate_labor_exploitation_indicators");
 
+  // Calculate total score
+  const total_score = Object.values(scores).reduce((sum, val) => sum + val, 0);
+
+  // Determine risk level
+  let risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL" = "LOW";
+  if (total_score >= 20) risk_level = "CRITICAL";
+  else if (total_score >= 15) risk_level = "HIGH";
+  else if (total_score >= 8) risk_level = "MODERATE";
+
+  // Determine intersections (multiple harm types)
+  const intersections: string[] = [];
+  const hasLabor = scores.labor_exploitation_score >= 2;
+  const hasSex = scores.sexual_violence_score >= 1;
+  const hasDV = scores.dv_score >= 2;
+  const hasTrafficking = scores.trafficking_score >= 3;
+
+  if (hasLabor && hasSex) intersections.push("labor_and_sex_trafficking");
+  if (hasLabor && hasDV) intersections.push("labor_and_dv");
+  if (hasSex && hasDV) intersections.push("sex_and_dv");
+  if (hasTrafficking && (hasLabor || hasSex || hasDV)) intersections.push("trafficking_with_other_harms");
+
   return {
     scores,
     tags: uniq(tags),
-    summaryFlags
+    summaryFlags,
+    total_score,
+    risk_level,
+    intersections
   };
 }
 

@@ -31,6 +31,9 @@ type ScreeningResult = {
   };
   tags: string[];
   summaryFlags: string[];
+  total_score: number;
+  risk_level: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  intersections: string[];
 };
 
 const theme = {

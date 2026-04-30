@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { buildResultsIntro, evaluateScreening } from "@/lib/screening";
+import { buildResultsIntro, evaluateScreening, ScreeningResult } from "@/lib/screening";
 
 type Resource = {
   id: string;
@@ -18,20 +18,6 @@ type Resource = {
 };
 
 type IntakeConfig = any;
-
-type ScreeningOutput = {
-  scores: {
-    safety_risk: number;
-    coercion_score: number;
-    trafficking_score: number;
-    labor_exploitation_score: number;
-    dv_score: number;
-    sexual_violence_score: number;
-    immigration_need: number;
-  };
-  tags: string[];
-  summaryFlags: string[];
-};
 
 const theme = {
   pageBg: "#F8FAFC",
@@ -199,7 +185,7 @@ export default function ResultsPage() {
     }).catch(() => {});
   }, []);
 
-  const screeningResult: ScreeningOutput | null = useMemo(() => {
+  const screeningResult: ScreeningResult | null = useMemo(() => {
     if (!cfg || !answers) return null;
     return evaluateScreening(cfg, answers);
   }, [cfg, answers]);

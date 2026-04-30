@@ -107,13 +107,13 @@ export default function HomePage() {
 
   return (
     <main
-      style={{
-        background: theme.pageBg,
-        minHeight: "100vh",
-        padding: "48px 20px",
-        color: theme.text
-      }}
-    >
+        style={{
+          background: theme.pageBg,
+          minHeight: "100vh",
+          padding: "48px 20px",
+          color: theme.text
+        }}
+      >
       <div style={{ maxWidth: 1080, margin: "0 auto" }}>
         {/* HERO */}
         <section

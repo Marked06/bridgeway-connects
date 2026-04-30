@@ -1,0 +1,1228 @@
+{
+  "version": "2.0",
+  "title": "Bridgeway Connects",
+  "description": "Answer a series of questions to help identify services and support that may be helpful. Your answers are not stored.",
+  "thresholds": {
+    "safety_risk": { "high": 4 },
+    "coercion_score": { "high": 35 },
+    "trafficking_score": { "high": 60 },
+    "labor_exploitation_score": { "high": 50 },
+    "dv_score": { "high": 20 },
+    "sexual_violence_score": { "high": 40 },
+    "immigration_need": { "high": 5 }
+  },
+  "steps": [
+    {
+      "id": "safety",
+      "title": "Your Safety",
+      "intro": "We want to make sure you're safe. These first few questions help us understand your situation and connect you with appropriate support.",
+      "questions": [
+        {
+          "id": "immediate_danger",
+          "type": "select",
+          "label": "Are you in immediate danger right now?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes, I am in danger" },
+            { "value": "no", "label": "No, I am not in immediate danger" },
+            { "value": "unsure", "label": "I'm not sure" }
+          ],
+          "helperText": "If you are in immediate danger, consider calling 911 or a local emergency service if it is safe to do so."
+        },
+        {
+          "id": "language",
+          "type": "select",
+          "label": "What is your preferred language?",
+          "required": true,
+          "options": [
+            { "value": "en", "label": "English" },
+            { "value": "es", "label": "Spanish" },
+            { "value": "fr", "label": "French" },
+            { "value": "pt", "label": "Portuguese" },
+            { "value": "ar", "label": "Arabic" },
+            { "value": "sw", "label": "Swahili" },
+            { "value": "vi", "label": "Vietnamese" },
+            { "value": "zh", "label": "Chinese" },
+            { "value": "ko", "label": "Korean" },
+            { "value": "tl", "label": "Tagalog" }
+          ]
+        },
+        {
+          "id": "state",
+          "type": "select",
+          "label": "What state are you in (or where do you need help)?",
+          "required": true,
+          "options": [
+            { "value": "AL", "label": "Alabama" },
+            { "value": "AK", "label": "Alaska" },
+            { "value": "AZ", "label": "Arizona" },
+            { "value": "AR", "label": "Arkansas" },
+            { "value": "CA", "label": "California" },
+            { "value": "CO", "label": "Colorado" },
+            { "value": "CT", "label": "Connecticut" },
+            { "value": "DE", "label": "Delaware" },
+            { "value": "FL", "label": "Florida" },
+            { "value": "GA", "label": "Georgia" },
+            { "value": "HI", "label": "Hawaii" },
+            { "value": "ID", "label": "Idaho" },
+            { "value": "IL", "label": "Illinois" },
+            { "value": "IN", "label": "Indiana" },
+            { "value": "IA", "label": "Iowa" },
+            { "value": "KS", "label": "Kansas" },
+            { "value": "KY", "label": "Kentucky" },
+            { "value": "LA", "label": "Louisiana" },
+            { "value": "ME", "label": "Maine" },
+            { "value": "MD", "label": "Maryland" },
+            { "value": "MA", "label": "Massachusetts" },
+            { "value": "MI", "label": "Michigan" },
+            { "value": "MN", "label": "Minnesota" },
+            { "value": "MS", "label": "Mississippi" },
+            { "value": "MO", "label": "Missouri" },
+            { "value": "MT", "label": "Montana" },
+            { "value": "NE", "label": "Nebraska" },
+            { "value": "NV", "label": "Nevada" },
+            { "value": "NH", "label": "New Hampshire" },
+            { "value": "NJ", "label": "New Jersey" },
+            { "value": "NM", "label": "New Mexico" },
+            { "value": "NY", "label": "New York" },
+            { "value": "NC", "label": "North Carolina" },
+            { "value": "ND", "label": "North Dakota" },
+            { "value": "OH", "label": "Ohio" },
+            { "value": "OK", "label": "Oklahoma" },
+            { "value": "OR", "label": "Oregon" },
+            { "value": "PA", "label": "Pennsylvania" },
+            { "value": "RI", "label": "Rhode Island" },
+            { "value": "SC", "label": "South Carolina" },
+            { "value": "SD", "label": "South Dakota" },
+            { "value": "TN", "label": "Tennessee" },
+            { "value": "TX", "label": "Texas" },
+            { "value": "UT", "label": "Utah" },
+            { "value": "VT", "label": "Vermont" },
+            { "value": "VA", "label": "Virginia" },
+            { "value": "WA", "label": "Washington" },
+            { "value": "WV", "label": "West Virginia" },
+            { "value": "WI", "label": "Wisconsin" },
+            { "value": "WY", "label": "Wyoming" }
+          ]
+        },
+        {
+          "id": "current_situation",
+          "type": "multiselect",
+          "label": "What best describes your current situation?",
+          "required": true,
+          "options": [
+            { "value": "currently_working", "label": "I'm currently working" },
+            { "value": "recently_left_job", "label": "I recently left a job" },
+            { "value": "unemployed", "label": "I'm unemployed/between jobs" },
+            { "value": "in_school", "label": "I'm in school" },
+            { "value": "unable_work", "label": "I'm unable to work due to health/disability" },
+            { "value": "prefer_not_answer", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "safe_place_tonight",
+          "type": "select",
+          "label": "Do you have a safe place to stay tonight?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes, I have a safe place" },
+            { "value": "no", "label": "No, I do not have a safe place" },
+            { "value": "unsure", "label": "I'm not sure if it's safe" }
+          ],
+          "helperText": "If you do not have a safe place to stay, the results page can highlight shelter and crisis resources."
+        }
+      ]
+    },
+    {
+      "id": "labor_wages",
+      "title": "Your Work & Wages",
+      "intro": "This section asks about your work and how you are paid. These details help us understand your situation and what resources might help.",
+      "questions": [
+        {
+          "id": "work_type",
+          "type": "select",
+          "label": "What type of work do you do (or did you do)?",
+          "required": true,
+          "options": [
+            { "value": "agriculture", "label": "Agriculture/farming" },
+            { "value": "domestic", "label": "Domestic work (housekeeping, childcare, elder care)" },
+            { "value": "construction", "label": "Construction/manual labor" },
+            { "value": "manufacturing", "label": "Manufacturing" },
+            { "value": "hospitality", "label": "Hospitality (hotel, restaurant, bar)" },
+            { "value": "food_service", "label": "Food service" },
+            { "value": "transportation", "label": "Transportation/delivery" },
+            { "value": "healthcare", "label": "Healthcare (medical assistants, nursing)" },
+            { "value": "retail", "label": "Retail/sales" },
+            { "value": "beauty", "label": "Beauty/personal services" },
+            { "value": "sex_work", "label": "Sex work" },
+            { "value": "other", "label": "Other (please specify)" }
+          ]
+        },
+        {
+          "id": "job_duration",
+          "type": "select",
+          "label": "How long have you been (or were you) in this job?",
+          "required": true,
+          "options": [
+            { "value": "less_1month", "label": "Less than 1 month" },
+            { "value": "1_3months", "label": "1–3 months" },
+            { "value": "3_6months", "label": "3–6 months" },
+            { "value": "6_12months", "label": "6–12 months" },
+            { "value": "1_2years", "label": "1–2 years" },
+            { "value": "2plus_years", "label": "2+ years" }
+          ]
+        },
+        {
+          "id": "work_legal",
+          "type": "select",
+          "label": "Is this work legal in the US?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes, it's legal work" },
+            { "value": "not_sure", "label": "I'm not sure" },
+            { "value": "no", "label": "No, I don't think it's legal" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "pay_frequency_type",
+          "type": "select",
+          "label": "How are you typically paid?",
+          "required": true,
+          "options": [
+            { "value": "hourly", "label": "Hourly wage" },
+            { "value": "daily", "label": "Daily rate" },
+            { "value": "weekly", "label": "Weekly salary" },
+            { "value": "monthly", "label": "Monthly salary" },
+            { "value": "per_task", "label": "Per task/job/piece" },
+            { "value": "commission", "label": "Commission" },
+            { "value": "tips", "label": "Tips/gratuities" },
+            { "value": "cash_unclear", "label": "Cash (amount unclear)" },
+            { "value": "mixed", "label": "Mixed/varies" },
+            { "value": "no_pay", "label": "Don't receive regular pay" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "pay_amount",
+          "type": "select",
+          "label": "What is the typical amount you receive per pay period?",
+          "required": true,
+          "options": [
+            { "value": "under_100", "label": "Under $100" },
+            { "value": "100_250", "label": "$100–$250" },
+            { "value": "250_500", "label": "$250–$500" },
+            { "value": "500_1000", "label": "$500–$1000" },
+            { "value": "1000_2000", "label": "$1000–$2000" },
+            { "value": "2000_plus", "label": "$2000+" },
+            { "value": "unsure", "label": "I'm unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "If you're unsure, give your best estimate. This helps us understand your situation."
+        },
+        {
+          "id": "pay_frequency",
+          "type": "select",
+          "label": "How often do you get paid?",
+          "required": true,
+          "options": [
+            { "value": "daily", "label": "Daily" },
+            { "value": "weekly", "label": "Weekly" },
+            { "value": "biweekly", "label": "Bi-weekly (every 2 weeks)" },
+            { "value": "monthly", "label": "Monthly" },
+            { "value": "employer_decides", "label": "Whenever employer decides" },
+            { "value": "irregular", "label": "Irregular/unpredictable" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "hours_per_day",
+          "type": "select",
+          "label": "How many hours do you typically work per day?",
+          "required": true,
+          "options": [
+            { "value": "under_4", "label": "Less than 4 hours" },
+            { "value": "4_6", "label": "4–6 hours" },
+            { "value": "6_8", "label": "6–8 hours" },
+            { "value": "8_10", "label": "8–10 hours" },
+            { "value": "10_12", "label": "10–12 hours" },
+            { "value": "12_16", "label": "12–16 hours" },
+            { "value": "16_plus", "label": "16+ hours" },
+            { "value": "varies", "label": "Varies widely" },
+            { "value": "unsure", "label": "I'm unsure" }
+          ]
+        },
+        {
+          "id": "days_per_week",
+          "type": "select",
+          "label": "How many days per week do you work?",
+          "required": true,
+          "options": [
+            { "value": "less_2", "label": "Less than 2 days" },
+            { "value": "2_3", "label": "2–3 days" },
+            { "value": "3_4", "label": "3–4 days" },
+            { "value": "4_5", "label": "4–5 days" },
+            { "value": "5_6", "label": "5–6 days" },
+            { "value": "7", "label": "7 days (every day)" },
+            { "value": "varies", "label": "Varies" },
+            { "value": "unsure", "label": "I'm unsure" }
+          ]
+        },
+        {
+          "id": "work_consistency",
+          "type": "select",
+          "label": "In a typical month, do you work every week, or are there weeks with no work?",
+          "required": true,
+          "options": [
+            { "value": "every_week", "label": "I work every week of the month" },
+            { "value": "most_weeks", "label": "I work most weeks (2–3 weeks/month)" },
+            { "value": "some_weeks", "label": "I work some weeks (1–2 weeks/month)" },
+            { "value": "very_unpredictable", "label": "Work is very unpredictable" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "additional_compensation",
+          "type": "multiselect",
+          "label": "Besides your main pay, do you receive any additional compensation?",
+          "required": false,
+          "options": [
+            { "value": "housing", "label": "Housing provided" },
+            { "value": "meals", "label": "Meals provided" },
+            { "value": "transportation", "label": "Transportation provided" },
+            { "value": "phone", "label": "Mobile phone provided" },
+            { "value": "healthcare", "label": "Healthcare/insurance" },
+            { "value": "clothing", "label": "Clothing/uniforms provided" },
+            { "value": "no_compensation", "label": "No additional compensation" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "deductions_from_pay",
+          "type": "select",
+          "label": "Are any deductions taken from your pay?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes, deductions are taken" },
+            { "value": "no", "label": "No, no deductions" },
+            { "value": "not_sure", "label": "I'm not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "deduction_types",
+          "type": "multiselect",
+          "label": "What deductions are taken from your pay?",
+          "required": false,
+          "options": [
+            { "value": "housing", "label": "Housing costs" },
+            { "value": "food", "label": "Food/meals" },
+            { "value": "transportation", "label": "Transportation" },
+            { "value": "recruitment_fees", "label": "Recruitment/job fees" },
+            { "value": "debt", "label": "Debt or loan repayment" },
+            { "value": "supplies", "label": "Supplies/tools for work" },
+            { "value": "uniforms", "label": "Uniforms/clothing" },
+            { "value": "phone", "label": "Phone/communication" },
+            { "value": "training", "label": "Training costs" },
+            { "value": "taxes", "label": "Government fees or taxes" },
+            { "value": "other", "label": "Other" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "pay_stub",
+          "type": "select",
+          "label": "Do you receive a pay stub or written record of what you earn?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "understand_pay",
+          "type": "select",
+          "label": "Do you understand exactly how your pay is calculated?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes, I understand" },
+            { "value": "partially", "label": "Partially" },
+            { "value": "no", "label": "No, I don't understand" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "payment_issues",
+          "type": "multiselect",
+          "label": "Have you ever experienced any of these payment issues?",
+          "required": false,
+          "options": [
+            { "value": "paid_less", "label": "Paid less than promised" },
+            { "value": "not_paid", "label": "Not paid at all" },
+            { "value": "paid_late", "label": "Paid late" },
+            { "value": "bonus_withheld", "label": "Promised bonus never received" },
+            { "value": "unclear_reduction", "label": "Unclear why pay was reduced" },
+            { "value": "none", "label": "None of these" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "It is okay if this hasn't happened to you. Answering honestly helps us understand your situation."
+        },
+        {
+          "id": "resolution_attempt",
+          "type": "select",
+          "label": "If you asked about your pay or tried to resolve a payment problem, what happened?",
+          "required": false,
+          "options": [
+            { "value": "resolved", "label": "I was able to resolve it" },
+            { "value": "corrected", "label": "I was told it was a mistake and got corrected" },
+            { "value": "dismissed", "label": "My employer dismissed my concerns" },
+            { "value": "threatened", "label": "I was threatened, yelled at, or retaliated against" },
+            { "value": "afraid_ask", "label": "I was afraid to ask" },
+            { "value": "never_happened", "label": "Never happened" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "Threats can be direct or indirect. Your experience matters."
+        }
+      ]
+    },
+    {
+      "id": "work_conditions",
+      "title": "Your Work Conditions & Safety",
+      "intro": "This section asks about what your workplace is like and whether you feel safe there.",
+      "questions": [
+        {
+          "id": "can_take_breaks",
+          "type": "select",
+          "label": "Are you able to take breaks during your work day?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "breaks_per_day",
+          "type": "select",
+          "label": "How many breaks do you typically get per day?",
+          "required": false,
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "one", "label": "1" },
+            { "value": "two", "label": "2" },
+            { "value": "three", "label": "3" },
+            { "value": "four_plus", "label": "4+" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "required_overtime",
+          "type": "select",
+          "label": "Are you ever required to work overtime or extra hours?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "overtime_pay",
+          "type": "select",
+          "label": "If overtime is required, are you paid extra for those hours?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "not_sure", "label": "Not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "days_off_per_week",
+          "type": "select",
+          "label": "How many days off do you typically get per week?",
+          "required": true,
+          "options": [
+            { "value": "zero", "label": "0 days" },
+            { "value": "half", "label": "0.5 days" },
+            { "value": "one", "label": "1 day" },
+            { "value": "one_half", "label": "1.5 days" },
+            { "value": "two", "label": "2 days" },
+            { "value": "three", "label": "3 days" },
+            { "value": "other", "label": "Other" },
+            { "value": "unsure", "label": "Unsure" }
+          ]
+        },
+        {
+          "id": "feel_safe",
+          "type": "select",
+          "label": "Do you feel safe in your workplace?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes, I feel safe" },
+            { "value": "no", "label": "No, I don't feel safe" },
+            { "value": "somewhat", "label": "Somewhat" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "unsafe_reasons",
+          "type": "multiselect",
+          "label": "If no or somewhat, what makes you feel unsafe?",
+          "required": false,
+          "options": [
+            { "value": "unsafe_conditions", "label": "Unsafe working conditions (equipment, chemicals, hazards)" },
+            { "value": "coworker_violence", "label": "Violence or threats from coworkers" },
+            { "value": "employer_violence", "label": "Violence or threats from employer/supervisor" },
+            { "value": "sexual_harassment", "label": "Sexual harassment or assault" },
+            { "value": "discrimination", "label": "Discrimination" },
+            { "value": "heat_cold", "label": "Excessive heat/cold" },
+            { "value": "sanitation", "label": "Poor sanitation or hygiene" },
+            { "value": "other", "label": "Other" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "protective_equipment",
+          "type": "select",
+          "label": "Do you have access to necessary protective equipment?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "workplace_injury",
+          "type": "select",
+          "label": "Has anyone at work ever injured you or threatened to?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "control_coercion",
+      "title": "Your Freedom & Control",
+      "intro": "This section asks about your freedom to make decisions and move around. These are important indicators of your situation.",
+      "questions": [
+        {
+          "id": "can_leave_job",
+          "type": "select",
+          "label": "Are you free to leave your job whenever you want?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "leaving_consequences",
+          "type": "select",
+          "label": "If you wanted to leave this job, what would happen?",
+          "required": true,
+          "options": [
+            { "value": "freely", "label": "I could leave freely, no consequences" },
+            { "value": "lose_pay", "label": "I could leave but would lose pay/housing" },
+            { "value": "retaliation", "label": "I could leave but I'd face retaliation" },
+            { "value": "threatened", "label": "My employer has threatened me if I try to leave" },
+            { "value": "afraid", "label": "I'm afraid to leave" },
+            { "value": "not_allowed", "label": "I don't think I'm allowed to leave" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "If leaving feels unsafe, impossible, or controlled by someone else, that matters."
+        },
+        {
+          "id": "free_movement",
+          "type": "select",
+          "label": "Are you free to move around during non-work hours?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "mostly", "label": "Mostly" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "barriers_to_leaving",
+          "type": "multiselect",
+          "label": "Is there anything preventing you from leaving your current situation right now?",
+          "required": false,
+          "options": [
+            { "value": "nowhere_safe", "label": "Nowhere safe to go" },
+            { "value": "no_money", "label": "No money for transportation" },
+            { "value": "deportation_fear", "label": "Fear of deportation" },
+            { "value": "threats", "label": "Threats to my safety or family" },
+            { "value": "debt", "label": "I owe a debt I'm told I must pay off" },
+            { "value": "documents_held", "label": "Documents are being held" },
+            { "value": "immigration", "label": "No legal status / immigration concerns" },
+            { "value": "language", "label": "Language barriers" },
+            { "value": "disability", "label": "Disability or health issues" },
+            { "value": "childcare", "label": "Childcare/dependent care issues" },
+            { "value": "dont_know", "label": "I don't know where to go" },
+            { "value": "emotional", "label": "Emotional/psychological reasons" },
+            { "value": "none", "label": "None of these" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "control_documents",
+          "type": "select",
+          "label": "Do you have control of your own important documents (passport, ID, work permit, etc.)?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "partially", "label": "Partially" },
+            { "value": "no_documents", "label": "I don't have documents" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "This can include a passport, ID, work papers, money, or other personal documents."
+        },
+        {
+          "id": "who_has_documents",
+          "type": "multiselect",
+          "label": "If no or partially, who has your documents and why?",
+          "required": false,
+          "options": [
+            { "value": "employer_safekeeping", "label": "Employer has them \"for safekeeping\"" },
+            { "value": "employer_immigration", "label": "Employer has them for \"immigration purposes\"" },
+            { "value": "loan_collateral", "label": "I gave them as collateral for a loan" },
+            { "value": "immigration_officer", "label": "Immigration officer has them" },
+            { "value": "someone_else", "label": "Someone else has them for another reason" },
+            { "value": "not_sure", "label": "I'm not sure where they are" },
+            { "value": "no_documents", "label": "I don't have documents to begin with" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "access_documents",
+          "type": "select",
+          "label": "Are you able to access your documents whenever you want?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "who_decides_schedule",
+          "type": "select",
+          "label": "Who makes decisions about your work schedule, time off, and work assignments?",
+          "required": true,
+          "options": [
+            { "value": "me", "label": "I decide" },
+            { "value": "employer", "label": "My employer decides" },
+            { "value": "discuss", "label": "I discuss it with my employer" },
+            { "value": "someone_else", "label": "Decisions are made by someone else (not my employer)" },
+            { "value": "unclear", "label": "It's unclear who decides" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "can_refuse_work",
+          "type": "select",
+          "label": "Can you refuse a work assignment or activity you don't want to do?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "never_tried", "label": "Never tried" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "permission_required",
+          "type": "multiselect",
+          "label": "Are you required to ask permission before doing normal things like:",
+          "required": false,
+          "options": [
+            { "value": "bathroom", "label": "Going to the bathroom" },
+            { "value": "food_water", "label": "Getting food or water" },
+            { "value": "talk_family", "label": "Talking to family or friends" },
+            { "value": "time_off", "label": "Leaving work early or taking time off" },
+            { "value": "medical", "label": "Seeking medical care" },
+            { "value": "religious", "label": "Going to church or religious services" },
+            { "value": "phone_calls", "label": "Making phone calls" },
+            { "value": "none", "label": "None of these" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "contact_family",
+          "type": "select",
+          "label": "Are you allowed to contact family, friends, or anyone outside of work?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "limited", "label": "Limited" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "monitor_communications",
+          "type": "select",
+          "label": "Does your employer monitor or control your phone, email, or communications?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "have_phone",
+          "type": "select",
+          "label": "Do you have your own phone or access to one when you need it?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "sometimes", "label": "Sometimes" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "who_to_call",
+          "type": "multiselect",
+          "label": "If you needed help right now, who could you call or reach out to?",
+          "required": false,
+          "options": [
+            { "value": "family", "label": "Family member" },
+            { "value": "friend", "label": "Friend" },
+            { "value": "religious", "label": "Religious leader or community member" },
+            { "value": "lawyer", "label": "Lawyer or legal aid" },
+            { "value": "government", "label": "Government agency" },
+            { "value": "hotline", "label": "Hotline or crisis service" },
+            { "value": "not_sure", "label": "I'm not sure who to call" },
+            { "value": "no_one", "label": "I have no one to call" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "been_threatened",
+          "type": "select",
+          "label": "Have you ever been threatened by your employer or anyone at work?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "threat_types",
+          "type": "multiselect",
+          "label": "What kinds of threats have been made?",
+          "required": false,
+          "options": [
+            { "value": "physical_harm", "label": "Threats of physical harm to me" },
+            { "value": "family_harm", "label": "Threats of harm to my family" },
+            { "value": "deportation", "label": "Threats of deportation" },
+            { "value": "basic_needs", "label": "Threats to take away housing or basic needs" },
+            { "value": "expose_info", "label": "Threats to expose personal information" },
+            { "value": "immigration", "label": "Threats related to immigration status" },
+            { "value": "police", "label": "Threats to call police" },
+            { "value": "shame", "label": "Shaming or public humiliation" },
+            { "value": "other", "label": "Other" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "Threats can be direct or indirect, including threats against loved ones."
+        },
+        {
+          "id": "fear_employer",
+          "type": "select",
+          "label": "Are you afraid of your employer?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "somewhat", "label": "Somewhat" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sexual_exploitation",
+      "title": "Sexual Experiences & Relationships",
+      "intro": "This section asks sensitive questions about sexual experiences. You do NOT have to answer. Your safety and privacy are our priority. Nothing you share will be judged. If you feel uncomfortable, you can skip these questions and still get support.",
+      "questions": [
+        {
+          "id": "pressured_sexual_activity",
+          "type": "select",
+          "label": "Have you ever been asked or pressured to engage in sexual activity with someone for money, drugs, a place to stay, or something else?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "not_sure", "label": "Not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "who_asked",
+          "type": "multiselect",
+          "label": "If yes, tell us more about that situation. Who asked you?",
+          "required": false,
+          "options": [
+            { "value": "romantic_partner", "label": "A romantic partner or spouse" },
+            { "value": "family", "label": "A family member" },
+            { "value": "employer", "label": "An employer or boss" },
+            { "value": "pimp", "label": "A pimp, gang member, or trafficker" },
+            { "value": "friend", "label": "A friend or someone I knew" },
+            { "value": "stranger", "label": "A stranger" },
+            { "value": "authority", "label": "A police officer or authority figure" },
+            { "value": "multiple", "label": "Multiple people took turns" },
+            { "value": "not_sure", "label": "I'm not sure who was in control" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "could_refuse",
+          "type": "select",
+          "label": "Were you able to refuse or say no?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "partially", "label": "Partially" },
+            { "value": "not_sure", "label": "Not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "why_couldnt_refuse",
+          "type": "multiselect",
+          "label": "If you couldn't refuse, why? What happened if you tried to say no?",
+          "required": false,
+          "options": [
+            { "value": "threatened", "label": "I was threatened (with violence, deportation, arrest, etc.)" },
+            { "value": "physically_forced", "label": "I was physically forced" },
+            { "value": "afraid", "label": "I was afraid" },
+            { "value": "desperate", "label": "I needed money/drugs/shelter desperately" },
+            { "value": "tricked", "label": "I was tricked or manipulated" },
+            { "value": "underage", "label": "I was underage at the time" },
+            { "value": "intoxicated", "label": "I was under the influence of drugs/alcohol" },
+            { "value": "trapped", "label": "I felt trapped or had no other choice" },
+            { "value": "dependent", "label": "Someone I depended on made me" },
+            { "value": "shame", "label": "Shame or guilt kept me quiet" },
+            { "value": "thought_normal", "label": "I thought it was normal at the time" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "frequency_sexual",
+          "type": "select",
+          "label": "How many times did this happen?",
+          "required": false,
+          "options": [
+            { "value": "once", "label": "Once" },
+            { "value": "few_times", "label": "A few times" },
+            { "value": "regularly", "label": "Regularly/ongoing" },
+            { "value": "many_times", "label": "Many times" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "duration_sexual",
+          "type": "select",
+          "label": "Over what time period did this happen?",
+          "required": false,
+          "options": [
+            { "value": "one_time", "label": "One time only" },
+            { "value": "one_week", "label": "Within one week" },
+            { "value": "one_month", "label": "Within one month" },
+            { "value": "several_months", "label": "Within several months" },
+            { "value": "one_year", "label": "Over a year" },
+            { "value": "multiple_years", "label": "Multiple years" },
+            { "value": "ongoing", "label": "Ongoing (still happening)" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "how_recruited",
+          "type": "select",
+          "label": "How did you first get involved in sexual activity or \"work\"? How did you meet the person?",
+          "required": false,
+          "options": [
+            { "value": "relationship", "label": "Through a relationship or dating" },
+            { "value": "app", "label": "Through an app (dating, social media, job board)" },
+            { "value": "friend", "label": "Through a friend or someone I knew" },
+            { "value": "family", "label": "Through family" },
+            { "value": "street", "label": "A stranger approached me on the street" },
+            { "value": "job_listing", "label": "Through a job listing or advertisement" },
+            { "value": "pimp", "label": "Through a pimp or trafficker" },
+            { "value": "sold", "label": "I was sold by family or someone" },
+            { "value": "substance", "label": "Through substance use (party, dealer, etc.)" },
+            { "value": "other", "label": "Other (write-in)" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "age_when_started",
+          "type": "select",
+          "label": "How old were you when this first happened?",
+          "required": false,
+          "options": [
+            { "value": "under_12", "label": "Under 12" },
+            { "value": "12_14", "label": "12–14" },
+            { "value": "15_17", "label": "15–17" },
+            { "value": "18_21", "label": "18–21" },
+            { "value": "22_30", "label": "22–30" },
+            { "value": "30_plus", "label": "30+" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "offered_compensation",
+          "type": "multiselect",
+          "label": "Were you offered anything to participate? (Payment, shelter, food, drugs, protection, etc.)",
+          "required": false,
+          "options": [
+            { "value": "money", "label": "Money/payment" },
+            { "value": "shelter", "label": "Food or shelter" },
+            { "value": "drugs", "label": "Drugs or alcohol" },
+            { "value": "affection", "label": "Attention or affection" },
+            { "value": "protection", "label": "Protection or safety" },
+            { "value": "immigration", "label": "Help with immigration/legal issues" },
+            { "value": "debt_payoff", "label": "Debt payoff" },
+            { "value": "nothing", "label": "Nothing - forced or coerced" },
+            { "value": "not_sure", "label": "Not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "someone_profited",
+          "type": "select",
+          "label": "Was there anyone who benefited from this arrangement? (Besides the person using you)",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "knew_about_profit",
+          "type": "select",
+          "label": "If someone was profiting from you, did you know about it?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "control_where_lived",
+          "type": "select",
+          "label": "Who had control over where you lived?",
+          "required": false,
+          "options": [
+            { "value": "me", "label": "I decided" },
+            { "value": "them", "label": "They decided" },
+            { "value": "discussed", "label": "We discussed it" },
+            { "value": "unclear", "label": "Unclear" },
+            { "value": "na", "label": "N/A" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "control_money",
+          "type": "select",
+          "label": "Who had control over your money/income?",
+          "required": false,
+          "options": [
+            { "value": "me", "label": "I decided" },
+            { "value": "them", "label": "They decided" },
+            { "value": "discussed", "label": "We discussed it" },
+            { "value": "unclear", "label": "Unclear" },
+            { "value": "na", "label": "N/A" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "took_documents",
+          "type": "select",
+          "label": "Did anyone take your identification documents, money, or other belongings?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "partially", "label": "Partially" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "fake_name",
+          "type": "select",
+          "label": "Were you required to use a fake name, profile, or \"stage name\"?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "give_money_earned",
+          "type": "select",
+          "label": "Did you have to give any money you earned to someone else?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "tried_to_stop",
+          "type": "multiselect",
+          "label": "If you tried to stop or leave, what happened?",
+          "required": false,
+          "options": [
+            { "value": "threatened", "label": "I was threatened" },
+            { "value": "beaten", "label": "I was beaten or physically hurt" },
+            { "value": "family_threatened", "label": "Someone threatened people I care about" },
+            { "value": "isolated", "label": "I was isolated from friends/family" },
+            { "value": "deport_told", "label": "I was told I'd be deported" },
+            { "value": "denied_needs", "label": "I was denied food, money, or shelter" },
+            { "value": "abandoned", "label": "I was abandoned in an unfamiliar place" },
+            { "value": "shamed", "label": "I was shamed or publicly humiliated" },
+            { "value": "children", "label": "I was told I'd never see my children again" },
+            { "value": "drugged", "label": "I was drugged or kept addicted" },
+            { "value": "let_go", "label": "Nothing happened - they let me leave" },
+            { "value": "never_tried", "label": "Never tried to leave" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "drug_use_during",
+          "type": "select",
+          "label": "Were you using drugs or alcohol during this time?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "occasionally", "label": "Occasionally" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "who_provided_drugs",
+          "type": "select",
+          "label": "Who provided the drugs or alcohol?",
+          "required": false,
+          "options": [
+            { "value": "self", "label": "I bought it myself" },
+            { "value": "partner", "label": "A partner or friend provided it" },
+            { "value": "exploiter", "label": "The person/people profiting from me provided it" },
+            { "value": "without_knowledge", "label": "It was given to me without my knowledge" },
+            { "value": "not_sure", "label": "I'm not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "needed_substances",
+          "type": "select",
+          "label": "Did you feel like you needed drugs or alcohol to cope with the situation?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "health_issues",
+          "type": "multiselect",
+          "label": "During this time, did you experience any health issues?",
+          "required": false,
+          "options": [
+            { "value": "sti", "label": "Sexually transmitted infections (STIs)" },
+            { "value": "pregnancy", "label": "Pregnancy or miscarriage" },
+            { "value": "injuries", "label": "Injuries from violence" },
+            { "value": "chronic_pain", "label": "Chronic pain" },
+            { "value": "sleep", "label": "Sleep problems" },
+            { "value": "eating", "label": "Eating disorders" },
+            { "value": "mental_health", "label": "Mental health issues (depression, anxiety, PTSD)" },
+            { "value": "substance", "label": "Substance use" },
+            { "value": "none", "label": "None/not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "relationship_type",
+          "type": "select",
+          "label": "How would you describe your relationship with the person (or people) involved?",
+          "required": false,
+          "options": [
+            { "value": "romantic", "label": "Romantic partner/spouse" },
+            { "value": "friend", "label": "Friend or someone I trusted" },
+            { "value": "family", "label": "Family member" },
+            { "value": "employer", "label": "Employer/boss" },
+            { "value": "pimp", "label": "Pimp or trafficker" },
+            { "value": "authority", "label": "Authority figure (police, military, etc.)" },
+            { "value": "stranger", "label": "Stranger" },
+            { "value": "group", "label": "Multiple people in a group/gang" },
+            { "value": "unclear", "label": "Unclear/complicated" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "still_happening",
+          "type": "select",
+          "label": "Is this situation still happening?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "ended_recently", "label": "Ended recently" },
+            { "value": "ended_long", "label": "Ended long ago" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "immigration",
+      "title": "Immigration & Legal Status",
+      "intro": "Your immigration status is not our concern. We're here to help, regardless of your legal status. This information helps us connect you with appropriate resources.",
+      "questions": [
+        {
+          "id": "immigration_status",
+          "type": "select",
+          "label": "What is your current immigration status?",
+          "required": false,
+          "options": [
+            { "value": "us_citizen", "label": "US Citizen" },
+            { "value": "permanent_resident", "label": "Permanent Resident (Green Card)" },
+            { "value": "visa_holder", "label": "Visa holder (work visa, student visa, etc.)" },
+            { "value": "undocumented", "label": "Undocumented" },
+            { "value": "asylum_seeker", "label": "Asylum seeker/pending case" },
+            { "value": "not_sure", "label": "Not sure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "Determines eligibility for certain visas (T visa, U visa, VAWA)"
+        },
+        {
+          "id": "contact_immigration",
+          "type": "select",
+          "label": "Have you ever been in contact with immigration authorities?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "unsure", "label": "Unsure" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "afraid_deported",
+          "type": "select",
+          "label": "Are you afraid of being deported?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "somewhat", "label": "Somewhat" },
+            { "value": "dont_know", "label": "Don't know" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ]
+        },
+        {
+          "id": "wants_immigration_help",
+          "type": "select",
+          "label": "Would you like information about immigration assistance?",
+          "required": false,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "maybe_later", "label": "Maybe later" },
+            { "value": "prefer_not", "label": "Prefer not to answer" }
+          ],
+          "helperText": "This does not determine eligibility. It only helps identify whether legal screening could be useful."
+        }
+      ]
+    },
+    {
+      "id": "support_needs",
+      "title": "What You Need & Next Steps",
+      "intro": "These final questions help us connect you with the resources and support that matter most to you.",
+      "questions": [
+        {
+          "id": "needs_right_now",
+          "type": "multiselect",
+          "label": "What do you need most right now?",
+          "required": true,
+          "options": [
+            { "value": "safe_housing", "label": "Safe housing" },
+            { "value": "financial", "label": "Financial assistance" },
+            { "value": "legal", "label": "Legal help" },
+            { "value": "medical", "label": "Medical care" },
+            { "value": "mental_health", "label": "Mental health support" },
+            { "value": "employment", "label": "Job/employment help" },
+            { "value": "language", "label": "Language interpretation" },
+            { "value": "immigration_help", "label": "Immigration assistance" },
+            { "value": "family", "label": "Family reunification" },
+            { "value": "safety_planning", "label": "Safety planning" },
+            { "value": "police", "label": "Police support" },
+            { "value": "other", "label": "Other" }
+          ],
+          "helperText": "Select as many support needs as apply right now."
+        },
+        {
+          "id": "connect_services",
+          "type": "select",
+          "label": "Would you like us to connect you with services?",
+          "required": true,
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" },
+            { "value": "maybe_later", "label": "Maybe later" }
+          ]
+        }
+      ]
+    }
+  ]
+}

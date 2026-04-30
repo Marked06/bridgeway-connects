@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 
 type Option = string | { value: string; label: string };
 
+type Condition = {
+  field?: string;
+  operator?: "===" | "!==" | "includes" | "!includes";
+  value?: any;
+  all?: Condition[];
+  any?: Condition[];
+};
+
 type Question = {
   id: string;
   type: "select" | "multiselect";
@@ -13,6 +21,7 @@ type Question = {
   default?: string;
   required?: boolean;
   helperText?: string;
+  showIf?: Condition | Condition[];
 };
 
 type Step = {
@@ -20,6 +29,7 @@ type Step = {
   title: string;
   intro?: string;
   questions: Question[];
+  showIf?: Condition | Condition[];
 };
 
 type IntakeConfig = {
@@ -62,7 +72,58 @@ function getAnswerLabel(question: Question, rawValue: string) {
   return match ? getOptionLabel(match) : prettifyValue(rawValue);
 }
 
+function evaluateCondition(condition: Condition | Condition[] | undefined, answers: Answers): boolean {
+  if (!condition) return true;
+
+  const conditions = Array.isArray(condition) ? condition : [condition];
+
+  return conditions.every((cond) => {
+    // Handle 'all' (AND) logic
+    if (cond.all) {
+      return evaluateCondition(cond.all, answers);
+    }
+
+    // Handle 'any' (OR) logic
+    if (cond.any) {
+      return cond.any.some((subCond) => evaluateCondition(subCond, answers));
+    }
+
+    // Handle basic field comparison
+    if (!cond.field || !cond.operator) return true;
+
+    const value = answers[cond.field];
+
+    switch (cond.operator) {
+      case "===":
+        return value === cond.value;
+      case "!==":
+        return value !== cond.value;
+      case "includes":
+        if (Array.isArray(value)) {
+          return value.includes(cond.value);
+        }
+        return false;
+      case "!includes":
+        if (Array.isArray(value)) {
+          return !value.includes(cond.value);
+        }
+        return true;
+      default:
+        return true;
+    }
+  });
+}
+
 const QUICK_EXIT_URL = "https://www.google.com";
+
+// Debug mode: set to true in browser console with: window.__DEBUG_INTAKE = true
+const DEBUG = typeof window !== "undefined" && (window as any).__DEBUG_INTAKE === true;
+
+function debugLog(label: string, data: any) {
+  if (DEBUG) {
+    console.log(`[INTAKE DEBUG] ${label}:`, data);
+  }
+}
 
 export default function IntakePage() {
   const router = useRouter();
@@ -70,6 +131,7 @@ export default function IntakePage() {
   const [config, setConfig] = useState<IntakeConfig | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [stepIndex, setStepIndex] = useState(0);
+  const [questionIndexInStep, setQuestionIndexInStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -115,6 +177,14 @@ export default function IntakePage() {
           }
         }
 
+        const savedQuestionIndex = sessionStorage.getItem("bc_intake_question_index");
+        if (savedQuestionIndex) {
+          const parsedQuestion = Number(savedQuestionIndex);
+          if (!Number.isNaN(parsedQuestion) && parsedQuestion >= 0) {
+            setQuestionIndexInStep(parsedQuestion);
+          }
+        }
+
         if (savedReview === "true") setShowReview(true);
 
         fetch("/api/analytics", {
@@ -146,6 +216,10 @@ export default function IntakePage() {
   }, [stepIndex, config]);
 
   useEffect(() => {
+    sessionStorage.setItem("bc_intake_question_index", String(questionIndexInStep));
+  }, [questionIndexInStep]);
+
+  useEffect(() => {
     sessionStorage.setItem("bc_intake_review", showReview ? "true" : "false");
   }, [showReview]);
 
@@ -154,10 +228,65 @@ export default function IntakePage() {
     return config.steps[stepIndex] ?? null;
   }, [config, stepIndex]);
 
+  const visibleQuestionsInStep = useMemo(() => {
+    if (!currentStep) return [];
+    const visible = currentStep.questions.filter((q) => {
+      const shouldShow = evaluateCondition(q.showIf, answers);
+      debugLog(`Filter Q[${q.id}]`, {
+        shouldShow,
+        showIf: q.showIf,
+        answerValue: answers[q.id]
+      });
+      return shouldShow;
+    });
+    debugLog(`Step[${currentStep.id}] visible questions`, visible.map(q => q.id));
+    return visible;
+  }, [currentStep, answers]);
+
+  const currentQuestion = useMemo(() => {
+    if (visibleQuestionsInStep.length === 0) {
+      debugLog("Current question", "NONE (no visible questions)");
+      return null;
+    }
+    const q = visibleQuestionsInStep[questionIndexInStep] ?? null;
+    debugLog("Current question", {
+      id: q?.id,
+      index: questionIndexInStep,
+      totalVisible: visibleQuestionsInStep.length,
+      label: q?.label
+    });
+    return q;
+  }, [visibleQuestionsInStep, questionIndexInStep]);
+
+  const nextQuestion = useMemo(() => {
+    if (visibleQuestionsInStep.length <= questionIndexInStep + 1) return null;
+    return visibleQuestionsInStep[questionIndexInStep + 1] ?? null;
+  }, [visibleQuestionsInStep, questionIndexInStep]);
+
+  // Clamp question index to valid range when visible questions change (AFTER memoized values)
+  useEffect(() => {
+    if (visibleQuestionsInStep.length === 0) {
+      setQuestionIndexInStep(0);
+      return;
+    }
+
+    if (questionIndexInStep >= visibleQuestionsInStep.length) {
+      setQuestionIndexInStep(Math.max(0, visibleQuestionsInStep.length - 1));
+    }
+  }, [visibleQuestionsInStep, questionIndexInStep]);
+
   const totalSteps = config?.steps?.length ?? 0;
+  // Check if we're at the last pair of questions (2 questions at a time)
+  const isLastPair = questionIndexInStep + 1 >= visibleQuestionsInStep.length;
   const isLastStep = stepIndex === totalSteps - 1;
+
+  // Progress based on question pairs (questions 1-2, 3-4, etc.)
+  const totalQuestionsToShow = visibleQuestionsInStep.length;
+  const questionsAnswered = questionIndexInStep + 1; // +1 because we count the pair we just answered
   const progressPercent =
-    totalSteps > 0 ? Math.round(((showReview ? totalSteps : stepIndex + 1) / totalSteps) * 100) : 0;
+    totalQuestionsToShow > 0
+      ? Math.round((questionsAnswered / totalQuestionsToShow) * 100)
+      : 0;
 
   const helperTextMap: Record<string, string> = {
     immediate_danger:
@@ -199,17 +328,23 @@ export default function IntakePage() {
     needs_now: "Select as many support needs as apply right now."
   };
 
-  const validateCurrentStep = () => {
-    if (!currentStep) return false;
-
-    for (const question of currentStep.questions) {
-      if (!question.required) continue;
-      const value = answers[question.id];
-
-      if (question.type === "multiselect") {
-        if (!Array.isArray(value) || value.length === 0) return false;
+  const validateCurrentQuestion = () => {
+    // For 2 questions at a time, validate only the required ones that are visible
+    if (currentQuestion && currentQuestion.required) {
+      const value = answers[currentQuestion.id];
+      if (currentQuestion.type === "multiselect") {
+        if (!(Array.isArray(value) && value.length > 0)) return false;
       } else {
-        if (typeof value !== "string" || value.trim() === "") return false;
+        if (!(typeof value === "string" && value.trim() !== "")) return false;
+      }
+    }
+
+    if (nextQuestion && nextQuestion.required) {
+      const value = answers[nextQuestion.id];
+      if (nextQuestion.type === "multiselect") {
+        if (!(Array.isArray(value) && value.length > 0)) return false;
+      } else {
+        if (!(typeof value === "string" && value.trim() !== "")) return false;
       }
     }
 
@@ -219,17 +354,30 @@ export default function IntakePage() {
   const goNext = () => {
     setValidationError(null);
 
-    if (!validateCurrentStep()) {
+    if (!validateCurrentQuestion()) {
       setValidationError("Please answer all required questions before continuing.");
       return;
     }
 
+    // Move by 2 questions in current step if possible
+    if (questionIndexInStep + 2 < visibleQuestionsInStep.length) {
+      setQuestionIndexInStep((prev) => prev + 2);
+      return;
+    }
+
+    // Only 1 question left
+    if (questionIndexInStep + 1 < visibleQuestionsInStep.length) {
+      setQuestionIndexInStep((prev) => prev + 1);
+      return;
+    }
+
+    // At end of section, move to next step
     if (currentStep) {
       fetch("/api/analytics", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          event_name: "intake_step_viewed",
+          event_name: "intake_step_completed",
           event_key: currentStep.id
         })
       }).catch(() => {});
@@ -240,7 +388,8 @@ export default function IntakePage() {
       return;
     }
 
-    setStepIndex((prev) => Math.max(0, Math.min(prev + 1, totalSteps - 1)));
+    setStepIndex((prev) => prev + 1);
+    setQuestionIndexInStep(0);
   };
 
   const goBack = () => {
@@ -251,7 +400,26 @@ export default function IntakePage() {
       return;
     }
 
-    setStepIndex((prev) => Math.max(0, prev - 1));
+    // Go back by 2 questions in current step if possible
+    if (questionIndexInStep >= 2) {
+      setQuestionIndexInStep((prev) => prev - 2);
+      return;
+    }
+
+    // Go back by 1 if we're at question 1
+    if (questionIndexInStep === 1) {
+      setQuestionIndexInStep(0);
+      return;
+    }
+
+    // At first question pair in step, go to previous step's last questions
+    if (stepIndex > 0) {
+      const prevStepIndex = stepIndex - 1;
+      setStepIndex(prevStepIndex);
+      // Will be updated in next render when visibleQuestionsInStep changes
+      // Setting to a high number to ensure we get the last question pair
+      setQuestionIndexInStep(999);
+    }
   };
 
   const submitToResults = () => {
@@ -268,10 +436,15 @@ export default function IntakePage() {
   };
 
   const handleSelectChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: value
-    }));
+    debugLog(`Select changed: ${questionId}`, value);
+    setAnswers((prev) => {
+      const updated = {
+        ...prev,
+        [questionId]: value
+      };
+      debugLog(`Answers after select change`, updated);
+      return updated;
+    });
   };
 
   const handleMultiSelectChange = (questionId: string, optionValue: string, checked: boolean) => {
@@ -281,10 +454,12 @@ export default function IntakePage() {
         ? Array.from(new Set([...current, optionValue]))
         : current.filter((item: string) => item !== optionValue);
 
-      return {
+      const updated = {
         ...prev,
         [questionId]: next
       };
+      debugLog(`MultiSelect changed: ${questionId}`, { optionValue, checked, newValue: updated[questionId] });
+      return updated;
     });
   };
 
@@ -413,7 +588,7 @@ export default function IntakePage() {
             />
           </div>
           <div style={{ marginTop: 8, fontSize: 12, color: theme.muted }}>
-            Progress: {progressPercent}%
+            Question {questionIndexInStep + 1} of {visibleQuestionsInStep.length} in {currentStep?.title} ({progressPercent}%)
           </div>
         </div>
 
@@ -430,45 +605,49 @@ export default function IntakePage() {
           <h2 style={{ marginTop: 0, color: theme.text }}>Review your answers</h2>
 
           <div style={{ display: "grid", gap: 18 }}>
-            {config.steps.map((step) => (
-              <div
-                key={step.id}
-                style={{
-                  border: `1px solid ${theme.border}`,
-                  borderRadius: 14,
-                  padding: 14,
-                  background: theme.cardSubtle
-                }}
-              >
-                <div style={{ fontWeight: 800, marginBottom: 10, color: theme.text }}>{step.title}</div>
+            {config.steps
+              .filter((step) => evaluateCondition(step.showIf, answers))
+              .map((step) => (
+                <div
+                  key={step.id}
+                  style={{
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: 14,
+                    padding: 14,
+                    background: theme.cardSubtle
+                  }}
+                >
+                  <div style={{ fontWeight: 800, marginBottom: 10, color: theme.text }}>{step.title}</div>
 
-                <div style={{ display: "grid", gap: 10 }}>
-                  {step.questions.map((question) => {
-                    const value = answers[question.id];
-                    let displayValue = "Not answered";
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {step.questions
+                      .filter((question) => evaluateCondition(question.showIf, answers))
+                      .map((question) => {
+                        const value = answers[question.id];
+                        let displayValue = "Not answered";
 
-                    if (question.type === "multiselect") {
-                      const selected = Array.isArray(value) ? value : [];
-                      displayValue =
-                        selected.length > 0
-                          ? selected.map((v) => getAnswerLabel(question, v)).join(", ")
-                          : "Not answered";
-                    } else if (typeof value === "string" && value.trim() !== "") {
-                      displayValue = getAnswerLabel(question, value);
-                    }
+                        if (question.type === "multiselect") {
+                          const selected = Array.isArray(value) ? value : [];
+                          displayValue =
+                            selected.length > 0
+                              ? selected.map((v) => getAnswerLabel(question, v)).join(", ")
+                              : "Not answered";
+                        } else if (typeof value === "string" && value.trim() !== "") {
+                          displayValue = getAnswerLabel(question, value);
+                        }
 
-                    return (
-                      <div key={question.id}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>
-                          {question.label}
-                        </div>
-                        <div style={{ marginTop: 4, color: theme.muted }}>{displayValue}</div>
-                      </div>
-                    );
-                  })}
+                        return (
+                          <div key={question.id}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>
+                              {question.label}
+                            </div>
+                            <div style={{ marginTop: 4, color: theme.muted }}>{displayValue}</div>
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           <div style={{ display: "flex", gap: 10, marginTop: 20, flexWrap: "wrap" }}>
@@ -572,10 +751,11 @@ export default function IntakePage() {
         </div>
       </div>
 
+      {/* Progress Bar */}
       <div style={{ marginTop: 16 }}>
         <div
           style={{
-            height: 10,
+            height: 8,
             width: "100%",
             background: theme.border,
             borderRadius: 999,
@@ -587,19 +767,21 @@ export default function IntakePage() {
               height: "100%",
               width: `${progressPercent}%`,
               background: theme.accent,
-              borderRadius: 999
+              borderRadius: 999,
+              transition: "width 0.3s ease"
             }}
           />
         </div>
-        <div style={{ marginTop: 8, fontSize: 12, color: theme.muted }}>
+        <div style={{ marginTop: 8, fontSize: 13, color: theme.muted, fontWeight: 500 }}>
           Step {stepIndex + 1} of {totalSteps} · {progressPercent}% complete
         </div>
       </div>
 
+      {/* Section Header */}
       <div
         style={{
           marginTop: 16,
-          padding: 14,
+          padding: 16,
           border: `1px solid ${theme.border}`,
           borderRadius: 16,
           background: theme.cardBg,
@@ -611,141 +793,245 @@ export default function IntakePage() {
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
-            padding: "6px 10px",
+            padding: "6px 12px",
             borderRadius: 999,
             background: theme.accentSoft,
             color: theme.accent,
             fontSize: 12,
-            fontWeight: 700
+            fontWeight: 700,
+            marginBottom: 8
           }}
         >
           Section {stepIndex + 1}
         </div>
 
-        <div style={{ marginTop: 10, fontWeight: 800, fontSize: 22, color: theme.text }}>
+        <div style={{ fontWeight: 800, fontSize: 24, color: theme.text, marginBottom: 4 }}>
           {currentStep.title}
         </div>
 
-        {currentStep.intro ? <p style={{ marginTop: 8, color: theme.muted }}>{currentStep.intro}</p> : null}
+        {currentStep.intro ? (
+          <p style={{ color: theme.muted, fontSize: 14, margin: 0 }}>
+            {currentStep.intro}
+          </p>
+        ) : null}
       </div>
 
+      {/* Two Questions Display */}
       <div
         style={{
           marginTop: 16,
-          padding: 16,
+          padding: 24,
           border: `1px solid ${theme.border}`,
           borderRadius: 16,
           background: theme.cardBg,
           boxShadow: "0 1px 2px rgba(15, 23, 42, 0.06)"
         }}
       >
-        <div style={{ display: "grid", gap: 22 }}>
-          {currentStep.questions.map((question) => {
-            const value = answers[question.id];
-            const helperText = question.helperText || helperTextMap[question.id];
+        {/* First Question */}
+        {currentQuestion ? (
+          <div style={{ marginBottom: nextQuestion ? 32 : 0 }}>
+            <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 12, color: theme.text }}>
+              {currentQuestion.label} {currentQuestion.required ? <span style={{ color: theme.danger }}>*</span> : null}
+            </div>
 
-            return (
-              <div key={question.id}>
-                <div style={{ fontWeight: 700, marginBottom: 8, color: theme.text }}>
-                  {question.label} {question.required ? <span style={{ color: theme.danger }}>*</span> : null}
-                </div>
-
-                {helperText ? (
-                  <div
-                    style={{
-                      marginBottom: 10,
-                      fontSize: 13,
-                      lineHeight: 1.5,
-                      color: theme.muted,
-                      background: theme.cardSubtle,
-                      border: `1px solid ${theme.border}`,
-                      borderRadius: 12,
-                      padding: "10px 12px"
-                    }}
-                  >
-                    {helperText}
-                  </div>
-                ) : null}
-
-                {question.type === "select" ? (
-                  <select
-                    value={typeof value === "string" ? value : ""}
-                    onChange={(e) => handleSelectChange(question.id, e.target.value)}
-                    style={{
-                      width: "100%",
-                      maxWidth: 560,
-                      padding: 12,
-                      borderRadius: 12,
-                      border: `1px solid ${theme.border}`,
-                      background: theme.cardBg,
-                      color: theme.text
-                    }}
-                  >
-                    <option value="" disabled>
-                      Select an option
-                    </option>
-                    {(question.options ?? []).map((option) => (
-                      <option key={getOptionValue(option)} value={getOptionValue(option)}>
-                        {getOptionLabel(option)}
-                      </option>
-                    ))}
-                  </select>
-                ) : null}
-
-                {question.type === "multiselect" ? (
-                  <div style={{ display: "grid", gap: 8 }}>
-                    {(question.options ?? []).map((option) => {
-                      const optionValue = getOptionValue(option);
-                      const optionLabel = getOptionLabel(option);
-                      const selectedValues = Array.isArray(value) ? value : [];
-                      const checked = selectedValues.includes(optionValue);
-
-                      return (
-                        <label
-                          key={optionValue}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                            padding: "10px 12px",
-                            borderRadius: 12,
-                            border: `1px solid ${checked ? theme.accent : theme.border}`,
-                            background: checked ? theme.accentSoft : theme.cardBg,
-                            cursor: "pointer"
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={(e) =>
-                              handleMultiSelectChange(question.id, optionValue, e.target.checked)
-                            }
-                          />
-                          <span style={{ color: theme.text }}>{optionLabel}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                ) : null}
+            {currentQuestion.helperText || helperTextMap[currentQuestion.id] ? (
+              <div
+                style={{
+                  marginBottom: 16,
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  color: theme.muted,
+                  background: theme.cardSubtle,
+                  border: `1px solid ${theme.border}`,
+                  borderRadius: 12,
+                  padding: "12px 14px"
+                }}
+              >
+                {currentQuestion.helperText || helperTextMap[currentQuestion.id]}
               </div>
-            );
-          })}
-        </div>
+            ) : null}
 
-        {validationError ? <p style={{ marginTop: 16, color: theme.danger }}>{validationError}</p> : null}
+            {currentQuestion.type === "select" ? (
+              <select
+                value={typeof answers[currentQuestion.id] === "string" ? answers[currentQuestion.id] : ""}
+                onChange={(e) => handleSelectChange(currentQuestion.id, e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  borderRadius: 12,
+                  border: `1px solid ${theme.border}`,
+                  background: theme.cardBg,
+                  color: theme.text,
+                  fontSize: 15
+                }}
+              >
+                <option value="">Select an option</option>
+                {(currentQuestion.options ?? []).map((option) => (
+                  <option key={getOptionValue(option)} value={getOptionValue(option)}>
+                    {getOptionLabel(option)}
+                  </option>
+                ))}
+              </select>
+            ) : null}
 
-        <div style={{ display: "flex", gap: 10, marginTop: 20, flexWrap: "wrap" }}>
+            {currentQuestion.type === "multiselect" ? (
+              <div style={{ display: "grid", gap: 10 }}>
+                {(currentQuestion.options ?? []).map((option) => {
+                  const optionValue = getOptionValue(option);
+                  const optionLabel = getOptionLabel(option);
+                  const selectedValues = Array.isArray(answers[currentQuestion.id]) ? answers[currentQuestion.id] : [];
+                  const checked = selectedValues.includes(optionValue);
+
+                  return (
+                    <label
+                      key={optionValue}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "12px 14px",
+                        borderRadius: 12,
+                        border: `2px solid ${checked ? theme.accent : theme.border}`,
+                        background: checked ? theme.accentSoft : theme.cardBg,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          handleMultiSelectChange(currentQuestion.id, optionValue, e.target.checked)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                      <span style={{ color: theme.text, fontSize: 15 }}>{optionLabel}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* Divider if showing 2 questions */}
+        {currentQuestion && nextQuestion ? (
+          <div
+            style={{
+              height: 1,
+              background: theme.border,
+              margin: "32px 0"
+            }}
+          />
+        ) : null}
+
+        {/* Second Question */}
+        {nextQuestion ? (
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 12, color: theme.text }}>
+              {nextQuestion.label} {nextQuestion.required ? <span style={{ color: theme.danger }}>*</span> : null}
+            </div>
+
+            {nextQuestion.helperText || helperTextMap[nextQuestion.id] ? (
+              <div
+                style={{
+                  marginBottom: 16,
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  color: theme.muted,
+                  background: theme.cardSubtle,
+                  border: `1px solid ${theme.border}`,
+                  borderRadius: 12,
+                  padding: "12px 14px"
+                }}
+              >
+                {nextQuestion.helperText || helperTextMap[nextQuestion.id]}
+              </div>
+            ) : null}
+
+            {nextQuestion.type === "select" ? (
+              <select
+                value={typeof answers[nextQuestion.id] === "string" ? answers[nextQuestion.id] : ""}
+                onChange={(e) => handleSelectChange(nextQuestion.id, e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  borderRadius: 12,
+                  border: `1px solid ${theme.border}`,
+                  background: theme.cardBg,
+                  color: theme.text,
+                  fontSize: 15
+                }}
+              >
+                <option value="">Select an option</option>
+                {(nextQuestion.options ?? []).map((option) => (
+                  <option key={getOptionValue(option)} value={getOptionValue(option)}>
+                    {getOptionLabel(option)}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+
+            {nextQuestion.type === "multiselect" ? (
+              <div style={{ display: "grid", gap: 10 }}>
+                {(nextQuestion.options ?? []).map((option) => {
+                  const optionValue = getOptionValue(option);
+                  const optionLabel = getOptionLabel(option);
+                  const selectedValues = Array.isArray(answers[nextQuestion.id]) ? answers[nextQuestion.id] : [];
+                  const checked = selectedValues.includes(optionValue);
+
+                  return (
+                    <label
+                      key={optionValue}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "12px 14px",
+                        borderRadius: 12,
+                        border: `2px solid ${checked ? theme.accent : theme.border}`,
+                        background: checked ? theme.accentSoft : theme.cardBg,
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          handleMultiSelectChange(nextQuestion.id, optionValue, e.target.checked)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                      <span style={{ color: theme.text, fontSize: 15 }}>{optionLabel}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {validationError ? (
+          <p style={{ marginTop: 16, color: theme.danger, fontSize: 14 }}>{validationError}</p>
+        ) : null}
+
+        {/* Navigation Buttons */}
+        <div style={{ display: "flex", gap: 10, marginTop: 24, flexWrap: "wrap" }}>
           <button
             type="button"
             onClick={goBack}
-            disabled={stepIndex === 0}
+            disabled={stepIndex === 0 && questionIndexInStep === 0}
             style={{
-              padding: "10px 14px",
-              borderRadius: 10,
+              padding: "12px 16px",
+              borderRadius: 12,
               border: `1px solid ${theme.border}`,
-              background: stepIndex === 0 ? "#F8FAFC" : theme.cardBg,
-              color: stepIndex === 0 ? "#94A3B8" : theme.text,
-              cursor: stepIndex === 0 ? "not-allowed" : "pointer"
+              background: stepIndex === 0 && questionIndexInStep === 0 ? theme.cardSubtle : theme.cardBg,
+              color: stepIndex === 0 && questionIndexInStep === 0 ? theme.muted : theme.text,
+              cursor: stepIndex === 0 && questionIndexInStep === 0 ? "not-allowed" : "pointer",
+              fontWeight: 600,
+              fontSize: 15,
+              transition: "all 0.2s"
             }}
           >
             Back
@@ -755,16 +1041,18 @@ export default function IntakePage() {
             type="button"
             onClick={goNext}
             style={{
-              padding: "10px 14px",
-              borderRadius: 10,
-              border: `1px solid ${theme.accent}`,
+              padding: "12px 24px",
+              borderRadius: 12,
+              border: "none",
               background: theme.accent,
               color: "#fff",
               cursor: "pointer",
-              fontWeight: 700
+              fontWeight: 700,
+              fontSize: 15,
+              transition: "all 0.2s"
             }}
           >
-            {isLastStep ? "Review Answers" : "Next"}
+            {isLastPair && isLastStep ? "Review Answers" : isLastPair ? "Next Section" : "Next"}
           </button>
         </div>
       </div>

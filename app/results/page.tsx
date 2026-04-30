@@ -340,6 +340,7 @@ export default function ResultsPage() {
 
     sessionStorage.removeItem("bc_intake_answers");
     sessionStorage.removeItem("bc_intake_step_index");
+    sessionStorage.removeItem("bc_intake_question_index");
     sessionStorage.removeItem("bc_intake_review");
     router.push("/intake");
   };
@@ -431,33 +432,7 @@ export default function ResultsPage() {
                   </div>
                 </div>
 
-                <div style={{ marginTop: 16 }}>
-                  <div style={{ fontWeight: 800, marginBottom: 8 }}>Matched support areas</div>
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    {screeningResult.tags.length > 0 ? (
-                      screeningResult.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          style={{
-                            border: `1px solid ${theme.border}`,
-                            background: theme.accentSoft,
-                            color: theme.accent,
-                            borderRadius: 999,
-                            padding: "6px 10px",
-                            fontSize: 12,
-                            fontWeight: 700
-                          }}
-                        >
-                          {getTagLabel(tag)}
-                        </span>
-                      ))
-                    ) : (
-                      <span style={{ fontSize: 12, color: theme.muted }}>
-                        No support tags matched yet
-                      </span>
-                    )}
-                  </div>
-                </div>
+                {/* Tags are kept in backend for resource filtering but hidden from user display */}
               </div>
 
               <div
